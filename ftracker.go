@@ -2,7 +2,6 @@ package ftracker
 
 import (
 	"fmt"
-	"math"
 )
 
 // Основные константы, необходимые для расчетов.
@@ -56,13 +55,11 @@ func ShowTrainingInfo(action int, trainingType string, duration, weight, height 
 		distance := distance(action)         // вызовите здесь необходимую функцию
 		speed := meanSpeed(action, duration) // вызовите здесь необходимую функцию
 		calories := WalkingSpentCalories(action, duration, weight, height)
-		//WalkingSpentCalories(action int, duration, weight, height float64)
-
 		// вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
 	case trainingType == "Плавание":
 		distance := distance(action)                                               // вызовите здесь необходимую функцию
-		speed := meanSpeed(action, duration)                                       // вызовите здесь необходимую функцию
+		speed := swimmingMeanSpeed(lengthPool, countPool, duration)                // вызовите здесь необходимую функцию
 		calories := SwimmingSpentCalories(lengthPool, countPool, duration, weight) // вызовите здесь необходимую функцию
 		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f\n", trainingType, duration, distance, speed, calories)
 	default:
@@ -106,8 +103,9 @@ const (
 func WalkingSpentCalories(action int, duration, weight, height float64) float64 {
 	// ваш код здесь
 	speed := meanSpeed(action, duration) / 3.6
-	return (walkingCaloriesWeightMultiplier*weight + (math.Pow(speed, 2)/height)*walkingSpeedHeightMultiplier*weight) * duration * minInH
-}
+	//pow2speed := math.Pow(speed, 2)
+	return (walkingCaloriesWeightMultiplier*weight + (speed/height)*walkingSpeedHeightMultiplier*weight) * duration * minInH
+} // ((0.035 * ВесСпортсменаВКг + (СредняяСкоростьВМетрахВСекунду**2 / РостВМетрах) * 0.029 * ВесСпортсменаВКг) * ВремяТренировкиВЧасах * minInH)
 
 // Константы для расчета калорий, расходуемых при плавании.
 const (
